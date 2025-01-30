@@ -20,6 +20,7 @@ const bodyParserMiddleware = [
 const app = express();
 
 // view engine setup
+app.use(cors());
 app.use(bodyParserMiddleware);
 app.use(logger("dev"));
 app.use(express.json());
