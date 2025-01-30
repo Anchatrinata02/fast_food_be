@@ -1,3 +1,4 @@
+require("dotenv").config();
 const db = require("./lib/dbConnection");
 const createError = require("http-errors");
 const express = require("express");
@@ -26,7 +27,7 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use("/detail",orderdetailrouter);
+app.use("/detail", orderdetailrouter);
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/master-menu", menuRouter);
 app.use("/order", bookingorderRouter);
@@ -50,10 +51,14 @@ app.use(function (err, req, res, next) {
 });
 db.getConnection((err, connection) => {
   if (err) {
-    console.error("Error connecting to MySQL:", err.message);
+    console.error("❌ Error connecting to MySQL:", err.message);
   } else {
-    console.log("Connected to MySQL!");
-    connection.release(); // Release the connection back to the pool
+    console.log("✅ Connected to MySQL database!");
+    connection.release();
   }
+});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
 module.exports = app;
