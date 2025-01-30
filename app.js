@@ -18,12 +18,18 @@ const bodyParserMiddleware = [
   upload.none(),
 ];
 const app = express();
-
+app.use(
+  cors({
+    origin: "*", // Change this if needed
+    methods: "GET,POST,PUT,DELETE,OPTIONS",
+    allowedHeaders: "Content-Type, Authorization",
+  })
+);
+app.use(express.json());
+app.options("*", cors());
 // view engine setup
-app.use(cors());
 app.use(bodyParserMiddleware);
 app.use(logger("dev"));
-app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use("/detail", orderdetailrouter);
