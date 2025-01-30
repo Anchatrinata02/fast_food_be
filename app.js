@@ -26,8 +26,12 @@ app.use(
   })
 );
 app.use(express.json());
-app.options("*", cors());
-// view engine setup
+app.options("*", (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.sendStatus(204);
+}); // view engine setup
 app.use(bodyParserMiddleware);
 app.use(logger("dev"));
 app.use(express.urlencoded({ extended: false }));
