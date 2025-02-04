@@ -4,16 +4,16 @@ const db = require("../lib/dbConnection"); // Ensure dbConnection is correctly s
 
 // ✅ 1. CREATE - Add a new menu item
 router.post("/menu", (req, res) => {
-  const { name, price, description, quantity, image_id } = req.body;
+  const { name, price, description, quantity } = req.body;
 
   if (!name || !price || !description || !quantity) {
     return res.status(400).json({ message: "All fields except image_id are required" });
   }
 
-  const query = `INSERT INTO menu (name, price, description, quantity, image_id, created_at, updated_at) 
+  const query = `INSERT INTO menu (name, price, description, quantity, created_at, updated_at) 
                  VALUES (?, ?, ?, ?, ?, NOW(), NOW())`;
 
-  db.query(query, [name, price, description, quantity, image_id || null], (err, results) => {
+  db.query(query, [name, price, description, quantity], (err, results) => {
     if (err) {
       console.error("Database Error:", err.message);
       return res.status(500).json({ message: "Internal Server Error", error: err.message });
