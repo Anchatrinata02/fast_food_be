@@ -50,13 +50,19 @@ router.post("/bookingorder", (req, res) => {
 
 // 🔹 2. READ - Mendapatkan Semua Booking Order
 router.get("/bookingorder", (req, res) => {
-  db.query("SELECT * FROM bookingorder", (err, results) => {
-    if (err) {
-      return res
-        .status(500)
-        .json({ message: "Gagal mengambil data", error: err.message });
-    }
-    res.status(200).json(results);
+  const userId = req.query.user_id;
+
+  if (!userId) {
+      return res.status(400).json({ message: "user_id is required" });
+  }
+
+  const query = "SELECT * FROM bookingorder WHERE user_id = ?";
+  
+  db.query(query, [userId], (err, results) => {
+      if (err) {
+          return res.status(500).json({ message: "Gagal mengambil data", error: err.message });
+      }
+      res.status(200).json(results);
   });
 });
 
