@@ -11,15 +11,15 @@ router.post("/menu", (req, res) => {
   }
 
   const query = `INSERT INTO menu (name, price, description, quantity, created_at, updated_at) 
-                 VALUES (?, ?, ?, ?, ?, NOW(), NOW())`;
+  VALUES (?, ?, ?, ?, NOW(), NOW())`;
 
-  db.query(query, [name, price, description, quantity], (err, results) => {
-    if (err) {
-      console.error("Database Error:", err.message);
-      return res.status(500).json({ message: "Internal Server Error", error: err.message });
-    }
-    res.status(201).json({ message: "Menu item added successfully", menuId: results.insertId });
-  });
+db.query(query, [name, price, description, quantity], (err, results) => {
+if (err) {
+console.error("Database Error:", err.message);
+return res.status(500).json({ message: "Internal Server Error", error: err.message });
+}
+res.status(201).json({ message: "Menu item added successfully", menuId: results.insertId });
+});
 });
 
 // ✅ 2. READ - Get all menu items
