@@ -55,16 +55,28 @@ router.get("/menu/:id", (req, res) => {
 // ✅ 4. UPDATE - Update a menu item
 router.put("/menu/:id", (req, res) => {
   const menuId = req.params.id;
-  const { name, price, description, quantity, image_id } = req.body;
+  const { name, price, description, quantity } = req.body; // Hapus image_id
 
+  // Validasi input
   if (!name || !price || !description || !quantity) {
-    return res.status(400).json({ message: "All fields except image_id are required" });
+    return res.status(400).json({ message: "All fields are required" });
   }
 
-  const query = `UPDATE menu SET name = ?, price = ?, description = ?, quantity = ?, image_id = ?, updated_at = NOW() 
-                 WHERE id = ?`;
+  if (isNaN(price) || isNaN(quantity)) {
+    return res.status(400).json({ message: "Price and quantity must be numbers" });
+  }
 
-  db.query(query, [name, price, description, quantity, image_id || null, menuId], (err, results) => {
+  if (isNaN(menuId)) {
+    return res.status(400).json({ message: "Invalid menu ID" });
+  }
+
+  const query = `UPDATE menu 
+                 SET name = ?, price = ?, description = ?, quantity = ?, updated_at = NOW() 
+                 WHERE id = ?`; // Hapus image_id dari query
+
+  const queryParams = [name, price, description, quantity, menuId]; // Hapus image_id dari parameter
+
+  db.query(query, queryParams, (err, results) => {
     if (err) {
       console.error("Database Error:", err.message);
       return res.status(500).json({ message: "Internal Server Error", error: err.message });
@@ -75,6 +87,7 @@ router.put("/menu/:id", (req, res) => {
     res.status(200).json({ message: "Menu item updated successfully" });
   });
 });
+
 
 // ✅ 5. DELETE - Delete a menu item
 router.delete("/menu/:id", (req, res) => {
