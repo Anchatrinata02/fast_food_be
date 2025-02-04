@@ -35,13 +35,33 @@ router.post("/order_detail", (req, res) => {
 
 // 🔹 2. READ - Mendapatkan Semua Order Detail
 router.get("/order_detail", (req, res) => {
-  db.query("SELECT * FROM order_detail", (err, results) => {
-    if (err) {
-      return res
-        .status(500)
-        .json({ message: "Gagal mengambil data", error: err.message });
-    }
-    res.status(200).json(results);
+  const { order_id } = req.query; // Get order_id from query parameters
+
+  if (!order_id) {
+      return res.status(400).json({ message: "order_id is required" });
+  }
+
+  const query = `
+      SELECT 
+          od.id, 
+          od.order_id, 
+          od.menu_id, 
+          m.name AS menu_name, 
+          m.price AS menu_price, 
+          m.description AS menu_description, 
+          od.quantity, 
+          od.created_at, 
+          od.updated_at 
+      FROM order_detail od
+      JOIN menu m ON od.menu_id = m.id
+      WHERE od.order_id = ?;
+  `;
+
+  db.query(query, [order_id], (err, results) => {
+      if (err) {
+          return res.status(500).json({ message: "Gagal mengambil data", error: err.message });
+      }
+      res.status(200).json(results);
   });
 });
 
